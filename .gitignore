@@ -1,0 +1,60 @@
+
+# .NET build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# .NET tools
+.dotnet/
+tools/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+
+# Logs and temporary files
+*.log
+logs/
+[Tt]emp/
+tmp/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+secrets.json
+secrets.*.json
+
+# Local database files
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+*.db
+
+# Python virtual environments, if used
+venv/
+.venv/
+myenv/
+cg_env/
+__pycache__/
+
+# OS files
+.DS_Store
+Thumbs.db
