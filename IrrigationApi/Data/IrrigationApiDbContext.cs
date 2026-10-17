@@ -1,28 +1,53 @@
 using IrrigationApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace IrrigationApi.Data
+namespace IrrigationApi.Data;
+
+public class IrrigationDbContext : DbContext
 {
-    public class IrrigationApiDbContext : DbContext
+    public IrrigationDbContext(
+        DbContextOptions<IrrigationDbContext> options)
+        : base(options)
     {
-        IrrigationApiDbContext(DbContextOptions<IrrigationApiDbContext> dbContextOptions) : base(dbContextOptions)
+    }
+
+    public DbSet<Device> Devices => Set<Device>();
+
+    public DbSet<SensorReading> SensorReadings =>
+        Set<SensorReading>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Device>(entity =>
         {
+            entity.HasKey(d => d.Id);
 
-        }
+            entity.Property(d => d.Name)
+                .HasMaxLength(100)
+                .IsRequired();
 
-        //DbSet Properties
-        public DbSet<Device> Devices { get; set; }
+            entity.Property(d => d.FieldName)
+                .HasMaxLength(150)
+                .IsRequired();
+        });
 
-        protected override void OnModelCreating(ModelBuilder b)
+        modelBuilder.Entity<SensorReading>(entity =>
         {
-            b.Entity<SensorReading>().HasIndex(x => new { x.DeviceId, x.RecordedAt });
-            b.Entity<Device>().HasData(new Device
-            {
-                Id = 1,
-                Name = "Tobacco Field 1",
-                FieldName = "Plot A",
-                CreatedAt = new DateTime(2026, 1, 1)
-            });
-        }
+            entity.HasKey(r => r.Id);
+
+            entity.Property(r => r.Temperature).HasColumnType("float");
+            entity.Property(r => r.Humidity).HasColumnType("float");
+            entity.Property(r => r.SoilMoisture).HasColumnType("float");
+            entity.Property(r => r.SoilPh).HasColumnType("float");
+
+            entity.HasOne(r => r.Device)
+                .WithMany(d => d.Readings)
+                .HasForeignKey(r => r.DeviceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(r => new { r.DeviceId, r.RecordedAt });
+        });
     }
 }
