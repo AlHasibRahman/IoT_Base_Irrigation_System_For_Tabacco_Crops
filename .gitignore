@@ -116,3 +116,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+#app build file
+tobacco_irrigation_app/build/*
