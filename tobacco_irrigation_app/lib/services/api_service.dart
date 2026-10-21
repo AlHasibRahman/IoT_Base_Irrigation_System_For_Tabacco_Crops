@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
 import '../models/device.dart';
@@ -13,10 +14,27 @@ class ApiService {
 
   final http.Client _client;
 
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:5000',
-  );
+  // static const String baseUrl = String.fromEnvironment(
+  //   'API_BASE_URL',
+  //   defaultValue: 'http://10.0.2.2:5000',
+  // );
+
+  static String get baseUrl {
+    const configuredUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: '',
+    );
+
+    if (configuredUrl.isNotEmpty) {
+      return configuredUrl;
+    }
+
+    if (kIsWeb) {
+      return Uri.base.origin;
+    }
+
+    return 'http://10.0.2.2:5000';
+  }
 
   Future<List<Device>> getDevices() async {
     final json = await _getJson('/api/devices');

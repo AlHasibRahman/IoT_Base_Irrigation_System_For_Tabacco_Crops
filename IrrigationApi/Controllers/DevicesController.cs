@@ -1,7 +1,7 @@
 using IrrigationApi.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using IrrigationApi.Models;
 namespace IrrigationApi.Controllers;
 
 [ApiController]
@@ -95,5 +95,41 @@ public class DevicesController : ControllerBase
             reading.PumpOn,
             reading.RecordedAt
         });
+    }
+
+    // POST /api/devices
+    [HttpPost]
+    public async Task<IActionResult> CreateDevice(
+        [FromBody] CreateDeviceRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name) ||
+            string.IsNullOrWhiteSpace(request.FieldName))
+        {
+            return BadRequest(new
+            {
+                message = "Device name and field name are required."
+            });
+        }
+
+        var device = new Device
+        {
+            Name = request.Name.Trim(),
+            FieldName = request.FieldName.Trim()
+        };
+
+        _db.Devices.Add(device);
+
+        await _db.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(GetDevice),
+            new { id = device.Id },
+            new
+            {
+                device.Id,
+                device.Name,
+                device.FieldName,
+                device.CreatedAt
+            });
     }
 }

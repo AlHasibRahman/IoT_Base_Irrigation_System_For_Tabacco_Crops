@@ -29,6 +29,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<IrrigationDbContext>();
+    db.Database.Migrate();   // creates NZWalksDb if missing, then creates the tables
 }
 
 app.UseCors("DevelopmentPolicy");
